@@ -19,4 +19,7 @@ class TESTINGGROUNDS_API UChooseNextWaypoint : public UBTTaskNode
 protected:
 	UPROPERTY(EditAnywhere, Category = "Baclkboard")
 	struct FBlackboardKeySelector IndexKey;
+
+	UPROPERTY(EditAnywhere, Category = "Baclkboard")
+	struct FBlackboardKeySelector WaypointKey;
 };
