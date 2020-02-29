@@ -60,5 +60,6 @@ public:
 	class USkeletalMeshComponent* FP_Gun;
 
 	/** Fires a projectile. */
+	UFUNCTION(BlueprintCallable, category = "Input")
 	void OnFire();
 };
