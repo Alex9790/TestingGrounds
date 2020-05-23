@@ -3,6 +3,8 @@
 
 #include "Tile.h"
 #include "Engine/World.h"
+//para dibujar una esfera que nos permita debuguear el Sweep de CastSphere
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ATile::ATile()
@@ -36,6 +38,10 @@ void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn)
 void ATile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//para probar CastSphere
+	CastSphere(GetActorLocation(), 300);
+	CastSphere(GetActorLocation() + FVector(0,0,1000), 300);
 	
 }
 
@@ -46,3 +52,32 @@ void ATile::Tick(float DeltaTime)
 
 }
 
+bool ATile::CastSphere(FVector Location, float Radius)
+{
+	FHitResult HitResult;
+
+	//en la ubicacion definida, hace un Sweep dentro del radio definido, virificando si hizo Hit con algo
+	//se usa ByChannel por que no nos interesa el tipo de Objeto con el que se hace contacto
+	bool HasHit = GetWorld()->SweepSingleByChannel(
+		HitResult,
+		Location,				//posicion inicial del Sweep
+		Location,				//posicion final del Sweep
+		FQuat::Identity,		//se puede hacer Sweep con otros objetos, en esos casos una rotacion definida puede tener sentido, pero en el caso deuna esfera no, FQuat::Identity es basicamente Rotacion 0
+		ECollisionChannel::ECC_Camera, //canal en el que se hara el Sweep, en este caso es todo lo que la camara pueda ver
+		FCollisionShape::MakeSphere(Radius)	//definir la forma con la que se hara el Sweep
+	);
+
+	//para deicidir el color final se usa: Ternary Operator (A ? B : C)
+	FColor ResultColor = HasHit ? FColor::Red : FColor::Green;
+	DrawDebugSphere(
+		GetWorld(),
+		Location, 
+		Radius, 
+		100, 
+		ResultColor,
+		true,				//para que no se borre la esfera despues de dibujar
+		100					//tiempo de vida del dibujo 100segundos
+	);
+
+	return HasHit;
+}
