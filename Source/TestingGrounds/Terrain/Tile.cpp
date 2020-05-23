@@ -63,13 +63,13 @@ bool ATile::CastSphere(FVector Location, float Radius)
 		Location,				//posicion inicial del Sweep
 		Location,				//posicion final del Sweep
 		FQuat::Identity,		//se puede hacer Sweep con otros objetos, en esos casos una rotacion definida puede tener sentido, pero en el caso deuna esfera no, FQuat::Identity es basicamente Rotacion 0
-		ECollisionChannel::ECC_Camera, //canal en el que se hara el Sweep, en este caso es todo lo que la camara pueda ver
+		ECollisionChannel::ECC_GameTraceChannel2, //canal en el que se hara el Sweep, en este caso es todo lo que la camara pueda ver
 		FCollisionShape::MakeSphere(Radius)	//definir la forma con la que se hara el Sweep
 	);
 
 	//para deicidir el color final se usa: Ternary Operator (A ? B : C)
 	FColor ResultColor = HasHit ? FColor::Red : FColor::Green;
-	DrawDebugSphere(
+	/*DrawDebugSphere(
 		GetWorld(),
 		Location, 
 		Radius, 
@@ -77,6 +77,16 @@ bool ATile::CastSphere(FVector Location, float Radius)
 		ResultColor,
 		true,				//para que no se borre la esfera despues de dibujar
 		100					//tiempo de vida del dibujo 100segundos
+	);*/
+	DrawDebugCapsule(
+		GetWorld(),
+		Location,
+		0,					//HalfHeight
+		Radius,
+		FQuat::Identity,
+		ResultColor,				
+		true,				//para que no se borre la esfera despues de dibujar
+		100
 	);
 
 	return HasHit;
