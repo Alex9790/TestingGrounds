@@ -15,7 +15,7 @@ ATile::ATile()
 }
 
 //Metodo para generar(Spawn) los Actores, estos parametros se definen en el Blueprint
-void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn, float Radius){
+void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale){
 /*	FVector Min(0, -2000, 0);
 	FVector Max(4000, 2000, 0);
 	FBox Bounds(Min, Max);
@@ -38,8 +38,15 @@ void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn,
 	{	
 
 		FVector SpawnPoint;
-		bool found = FindEmptyLocation(SpawnPoint, Radius);
-		PlaceActor(ToSpawn, SpawnPoint);	
+		float RandomScale = FMath::RandRange(MinScale, MaxScale);
+		bool found = FindEmptyLocation(SpawnPoint, Radius * RandomScale); //el radio se ve afectado por el tamaño del objeto
+		if (found) {
+			//valor random para la rotacion, entre -180º y 180º
+			float RandomRotation = FMath::RandRange(-180.f, 180.f);
+			PlaceActor(ToSpawn, SpawnPoint, RandomRotation, RandomScale);
+		}
+
+		
 	}
 }
 
@@ -49,7 +56,7 @@ bool ATile::FindEmptyLocation(FVector& OutLocation, float Radius) {
 	FBox Bounds(Min, Max);
 
 	//limite de intentos para buscar un lugar disponible
-	const int MAX_ATTEMPTS = 100;
+	const int MAX_ATTEMPTS = 50;
 	for (size_t i = 0; i < MAX_ATTEMPTS; i++)
 	{
 		FVector CandidatePoint = FMath::RandPointInBox(Bounds);
@@ -63,13 +70,17 @@ bool ATile::FindEmptyLocation(FVector& OutLocation, float Radius) {
 	return false;
 }
 
-void ATile::PlaceActor(TSubclassOf<AActor> ToSpawn, FVector SpawnPoint) {
+void ATile::PlaceActor(TSubclassOf<AActor> ToSpawn, FVector SpawnPoint, float Rotation, float Scale) {
 	//genera el Actor indicado en la posicion origen del mundo
 	AActor* Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn);
 	//se mueve el Actor a la posicion random generada
 	Spawned->SetActorRelativeLocation(SpawnPoint);
 	//se enlaza el Actor Spawned a Tile						(//como se enlazara con tile, //si se quedara pegado fijo a tile (true) o se vera influenciado por la fisica (false ))
 	Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+	//asignando la rotacion al Actor - FRotator(Pitch, Yaw, Row)
+	Spawned->SetActorRotation(FRotator(0, Rotation, 0));
+	//asignando el tamaño random
+	Spawned->SetActorScale3D(FVector(Scale));
 }
 
 // Called when the game starts or when spawned
@@ -108,7 +119,7 @@ bool ATile::CanSpawnAtLocation(FVector Location, float Radius)
 	);
 
 	//para deicidir el color final se usa: Ternary Operator (A ? B : C)
-	FColor ResultColor = HasHit ? FColor::Red : FColor::Green;
+//	FColor ResultColor = HasHit ? FColor::Red : FColor::Green;
 	/*DrawDebugSphere(
 		GetWorld(),
 		Location, 
@@ -118,7 +129,7 @@ bool ATile::CanSpawnAtLocation(FVector Location, float Radius)
 		true,				//para que no se borre la esfera despues de dibujar
 		100					//tiempo de vida del dibujo 100segundos
 	);*/
-	DrawDebugCapsule(
+	/*DrawDebugCapsule(
 		GetWorld(),
 		GlobalLocation,
 		0,					//HalfHeight
@@ -127,7 +138,7 @@ bool ATile::CanSpawnAtLocation(FVector Location, float Radius)
 		ResultColor,				
 		true,				//para que no se borre la esfera despues de dibujar
 		100
-	);
+	);*/
 
 	//se invierte porque queremos cuando no haga Hit, significa que el lugar esta disponible
 	return !HasHit;
