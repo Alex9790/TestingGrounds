@@ -7,6 +7,7 @@
 #include "DrawDebugHelpers.h"
 //Para utilizar Pool of Actors
 //#include "EngineUtils.h"
+#include "ActorPool.h"
 
 // Sets default values
 ATile::ATile()
@@ -14,6 +15,12 @@ ATile::ATile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+}
+
+void ATile::SetPool(UActorPool* InPool)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[%s] Setting Pool %s"), *(this->GetName()), *(InPool->GetName()));
+	Pool = InPool;
 }
 
 //Metodo para generar(Spawn) los Actores, estos parametros se definen en el Blueprint

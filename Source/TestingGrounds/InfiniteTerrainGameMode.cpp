@@ -6,8 +6,15 @@
 #include "GameFramework/Volume.h"
 //Para utilizar Pool of Actors
 #include "EngineUtils.h"
+#include "ActorPool.h"
 
-void AInfiniteTerrainGameMode::PopulateBoundsVolumePool() {
+AInfiniteTerrainGameMode::AInfiniteTerrainGameMode()
+{
+	NavMeshBoundsVolumePool = CreateDefaultSubobject<UActorPool>(FName("Nav Mesh Bounds Volume Pool"));
+}
+
+void AInfiniteTerrainGameMode::PopulateBoundsVolumePool()
+{
 	//pool de actores - se cambia la clase generica del iterator de AActor a ANavMeshBoundsVolume, porque solo queremos ANavMeshBoundsVolume
 	auto VolumeIterator = TActorIterator<AVolume>(GetWorld());
 	//iterando en la lista de Actors
@@ -23,7 +30,8 @@ void AInfiniteTerrainGameMode::PopulateBoundsVolumePool() {
 	}
 }
 
-void AInfiniteTerrainGameMode::AddToPool(AVolume* VolumeToAdd){
+void AInfiniteTerrainGameMode::AddToPool(AVolume* VolumeToAdd)
+{
 	auto VolumeName = VolumeToAdd->GetName();
 	if (VolumeName.Contains(FString("NavMesh"), ESearchCase::CaseSensitive, ESearchDir::FromStart)) {
 		UE_LOG(LogTemp, Warning, TEXT("Actor Encontrado: %s"), *VolumeToAdd->GetName());
