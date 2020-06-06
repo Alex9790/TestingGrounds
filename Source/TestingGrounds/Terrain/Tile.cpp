@@ -5,6 +5,8 @@
 #include "Engine/World.h"
 //para dibujar una esfera que nos permita debuguear el Sweep de CastSphere
 #include "DrawDebugHelpers.h"
+//Para utilizar Pool of Actors
+//#include "EngineUtils.h"
 
 // Sets default values
 ATile::ATile()
@@ -92,6 +94,18 @@ void ATile::BeginPlay()
 	//CanSpawnAtLocation(GetActorLocation(), 300);
 	//CanSpawnAtLocation(GetActorLocation() + FVector(0,0,1000), 300);
 	
+	/*
+	//pool de actores
+	TActorIterator<AActor> ActorIterator = TActorIterator<AActor>(GetWorld());
+	//iterando en la lista de Actors
+	while (ActorIterator) {
+		//obtener actor de la lista
+		AActor* FoundActor = *ActorIterator;
+		UE_LOG(LogTemp, Warning, TEXT("Actor Encontrado: %s"), *FoundActor->GetName());
+		//mover el apuntador al siguiente Actor en la lista
+		++ActorIterator; //ActorIterator++ no compilara
+	}
+	*/
 }
 
 // Called every frame
