@@ -32,6 +32,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void SetPool(UActorPool* Pool);
 
+	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
+		FVector MinExtent;
+	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
+		FVector MaxExtent;
+
 private:
 
 	void PositionNavMeshBoundsVolume();
